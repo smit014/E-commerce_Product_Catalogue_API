@@ -10,7 +10,7 @@ from src.resource.authentication.schema import (
 auth_router = APIRouter()
 
 
-@auth_router.post("/login", status_code=200)
+@auth_router.post("/login", status_code=201)
 def login_api(user_data: UserLoginRequest):
     user_info = login_user(user_data.model_dump())
     return user_info

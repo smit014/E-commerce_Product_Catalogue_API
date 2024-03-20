@@ -5,7 +5,7 @@ from sqlalchemy import or_
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from src.resource.authentication.serializer import serializer_for_login
-from src.resource.authentication.jwt_token import generate_token
+from src.utils.jwt_token import generate_token
 
 db = Sessionlocal()
 
@@ -69,26 +69,8 @@ def change_password(user_details, user_id):
                     db.close()
                     return JSONResponse({"Message": "password successfully changed"}, status_code=200)
                 else:
-                    raise HTTPException(status_code=401, detail="Incorrect password")
+                    raise HTTPException(status_code=401, detail="Incorrect Old password")
         else:
             raise HTTPException(status_code=404, detail="User not found")
     else:
         raise HTTPException(status_code=407,detail="Login with correct user data")
-
-        # if user_data:
-        #     if check_password_hash(user_data.password, password):
-        #         if password == user_details.get("new_password"):
-        #             raise HTTPException(
-        #                 status_code=401,
-        #                 detail="Old Password and New Password has to be Different",
-        #             )
-
-        #         user_data.password = new_password
-        #         db.commit()
-        #         db.close()
-        #         return JSONResponse(
-        #             {"Message": "password successfully changed"}, status_code=200
-        #         )
-
-        #     else:
-        #         raise HTTPException(status_code=401, detail="Incorrect password")
