@@ -10,6 +10,7 @@ def serializer_for_category(category_data):
                 "name" :record.name,
                 "description":record.description,
                 "user_id " :record.user_id,
+                "updated_at":record.updated_at,
             }
         )
     return filter_data

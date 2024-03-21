@@ -4,6 +4,7 @@ from src.resource.category.serializer import serializer_for_category
 from database.database import Sessionlocal
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
+from datetime import datetime
 
 db = Sessionlocal()
 
@@ -52,6 +53,7 @@ def update_category(category_details, category_id, user_details):
         if category_data:
             category_data.name = category_details.get("name") if category_details.get("name") is not None else category_data.name
             category_data.description = category_details.get("description") if category_details.get("description") is not None else category_data.description
+            category_data.updated_at = datetime.now()
             db.commit()
             db.close()
             return JSONResponse({"Message": "category upadate successfully"})

@@ -13,6 +13,7 @@ def serializer_for_product(product_data):
                 "price":record.price,
                 "stock_quantity":record.stock_quantity,
                 "image":record.image,
+                "updated_at":record.updated_at,
             }
         )
     return filter_data

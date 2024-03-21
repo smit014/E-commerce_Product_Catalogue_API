@@ -30,7 +30,7 @@ def view_product_api(product_details: ProductViewRequest):
     return product_info
 
 
-@product_router.patch("/product/{product_id}", status_code=201)
+@product_router.patch("/product/{product_id}", status_code=200)
 def upadte_product_api(
     product_id: str,
     product_detail: ProductUpdateRequest,

@@ -3,6 +3,7 @@ from sqlalchemy import Column,String,DateTime,ForeignKey,Float,Integer
 from datetime import datetime
 from src.resource.user.model import User
 from src.resource.product.model import Product
+from sqlalchemy.orm import relationship
 
 
 class Order(Base):
@@ -13,7 +14,9 @@ class Order(Base):
     status = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.now())
     updated_at = Column(DateTime, default=datetime.now())
-
+    
+    # Define one-to-many relationship with OrderItem
+    order_items = relationship("OrderItem", back_populates="order")
 
 class OrderItem(Base):
     __tablename__ = 'order_items'
@@ -24,4 +27,8 @@ class OrderItem(Base):
     unit_price = Column(Float, nullable=False)
     total_price = Column(Float, nullable=False)
     created_at = Column(DateTime, default=datetime.now())
+    
+    # Define many-to-one relationship with Order
+    order = relationship("Order", back_populates="order_items")
+
 

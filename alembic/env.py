@@ -7,6 +7,9 @@ from database.database import Base
 from src.resource.user.model import User
 from src.resource.category.model import Category
 from src.resource.product.model import Product
+from src.resource.review.model import Review
+from src.resource.order.model import Order,OrderItem
+from src.resource.cart.model import Cart,CartItem
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

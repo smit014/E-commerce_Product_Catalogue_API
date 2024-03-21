@@ -8,13 +8,31 @@ from src.config import Config
 import uuid
 db = Sessionlocal()
 
+def create_admin(admin_details):
+    id = str(uuid.uuid4())
+    is_admin = admin_details.get('admin_key') == Config.ADMIN_SECRET_KEY
+    if not is_admin:
+        raise HTTPException(status_code=401, detail="Admin key is required to become a ADMIN")
+
+    user_info = User(
+        id = id,
+        first_name=admin_details.get('first_name'),
+        last_name=admin_details.get('last_name'),
+        name=admin_details.get('name'),
+        email=admin_details.get('email'),
+        phone_no=admin_details.get('phone_no'),
+        password=generate_password_hash(admin_details.get('password')),
+        is_admin=is_admin,
+    )
+    db.add(user_info)
+    db.commit()
+    db.close()
+    return {"Message": "Admin user created successfully"}
+
+
 
 def create_user(user_details):
     id = str(uuid.uuid4())
-    is_admin = user_details.get('is_admin') and user_details.get('admin_key') == Config.ADMIN_SECRET_KEY
-
-    if user_details.get('is_admin') and not is_admin:
-        raise HTTPException(status_code=401, detail="Admin key is required to become a ADMIN")
 
     user_info = User(
         id = id,
@@ -24,17 +42,11 @@ def create_user(user_details):
         email=user_details.get('email'),
         phone_no=user_details.get('phone_no'),
         password=generate_password_hash(user_details.get('password')),
-        is_admin=is_admin,
     )
-
     db.add(user_info)
     db.commit()
     db.close()
-
-    if is_admin:
-        return {"Message": "Admin user created successfully"}
-    else:
-        return {"Message": "User created successfully"}
+    return {"Message": "User created successfully"}
 
 
 def get_user(user_id):

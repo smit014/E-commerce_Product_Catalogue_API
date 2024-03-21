@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from typing import Annotated
-from src.resource.user.schema import UserRequest
+from src.resource.user.schema import UserRequest,AdminRequest
 from src.utils.validator import authorization
 from src.functionality.user.user import create_user, get_user,delete_user
 
@@ -12,6 +12,10 @@ def create_user_api(user_data: UserRequest):
     user_info = create_user(user_data.model_dump())
     return user_info
 
+@user_router.post("/admin", status_code=201)
+def create_user_api(admin_data: AdminRequest):
+    admin_info = create_user(admin_data.model_dump())
+    return admin_info
 
 @user_router.get("/get_user", status_code=200)
 def get_user_api(user_data: Annotated[dict, Depends(authorization)]):

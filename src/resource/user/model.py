@@ -1,6 +1,7 @@
 from database.database import Base
 from sqlalchemy import Column,String,VARCHAR,Boolean,DateTime
 from datetime import datetime
+from sqlalchemy.orm import relationship
 
 class User(Base):
     __tablename__ = 'users'
@@ -16,4 +17,6 @@ class User(Base):
     updated_at = Column(DateTime, default=datetime.now())
     is_active = Column(Boolean, default=True)
     is_deleted = Column(Boolean, default=False)
+
+    cart = relationship("Cart", back_populates="user")
 
