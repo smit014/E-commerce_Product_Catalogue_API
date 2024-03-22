@@ -13,7 +13,11 @@ def create_admin(admin_details):
     is_admin = admin_details.get('admin_key') == Config.ADMIN_SECRET_KEY
     if not is_admin:
         raise HTTPException(status_code=401, detail="Admin key is required to become a ADMIN")
-
+    if not  admin_details.get("email") or admin_details.get("phone_no"):
+        raise HTTPException(status_code=422,detail="add email or phone number")
+    if not admin_details.get("password"):
+        raise HTTPException(status_code=422 ,detail="Password is required")
+    
     user_info = User(
         id = id,
         first_name=admin_details.get('first_name'),
@@ -30,10 +34,13 @@ def create_admin(admin_details):
     return {"Message": "Admin user created successfully"}
 
 
-
 def create_user(user_details):
     id = str(uuid.uuid4())
-
+    if not  user_details.get("email") or user_details.get("phone_no"):
+        raise HTTPException(status_code=422,detail="add email or phone number")
+    if not user_details.get("password"):
+        raise HTTPException(status_code=422 ,detail="Password is required")
+    
     user_info = User(
         id = id,
         first_name=user_details.get('first_name'),
@@ -75,5 +82,4 @@ def delete_user(user_id,user_details):
             return JSONResponse({"Message": "User deleted successfully"})
     else:
         raise HTTPException(status_code=409,detail="Invalid user id")
-
 

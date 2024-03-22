@@ -5,55 +5,85 @@ from database.database import Sessionlocal
 from src.resource.order.model import Order, OrderItem
 from src.resource.product.model import Product
 from datetime import datetime
+from src.resource.cart.model import Cart
+from src.resource.order.serializer import serializer_for_order
 
 db = Sessionlocal()
-def create_order(order_data):
-    try:
-        order_id = str(uuid.uuid4())  
-        order = Order(
-            id=order_id,
-            user_id=order_data.user_id,
-            total_amount=0.0,  
-            status="pending",
-        )
-        db.add(order)
-        db.commit()
-        db.refresh(order)
 
-        # Add order items to the order
-        for product_id, item_data in order_data.order_items.items():
-            product = db.query(Product).filter_by(id=item_data.product_id).first()
-            if product:
-                order_item_id = str(uuid.uuid4())  # Generate unique order item ID
-                order_item = OrderItem(
-                    id=order_item_id,
-                    order_id=order.id,
-                    product_id=item_data.product_id,
-                    quantity=item_data.quantity,
-                    unit_price=product.price,
-                    total_price=item_data.quantity * product.price,
-                    created_at=datetime.now(),
-                )
-                db.add(order_item)
-                db.commit()
-                # Update the total amount of the order
-                order.total_amount += order_item.total_price
+def create_order_from_cart(cart_id,user_id):
+    cart = db.query(Cart).filter_by(id=cart_id, status='active').first()
 
-        # Update the order with the calculated total amount
-        db.commit()
-        db.refresh(order)
+    if cart:
+        if cart.user_id == user_id:
+            id = str(uuid.uuid4())
+            order = Order(
+                id = id,
+                user_id=cart.user_id,
+                cart_id = cart.id,
+                total_amount=cart.total_amount,
+                status='pending',
+                created_at=datetime.now(),
+                updated_at=datetime.now()
+            )
+            db.add(order)
+            db.commit()
+            cart.status = 'ordered'
+            db.commit()
 
-        # Return success message with order details
-        return JSONResponse(
-            status_code=200,
-            content={"message": "Order created successfully"},
-        )
+            for cart_item in cart.cart_items:
+                product = db.query(Product).filter_by(id=cart_item.product_id).first()
+                if product:
+                    id = str(uuid.uuid4())
+                    order_item = OrderItem(
+                        id =id,
+                        order_id=order.id,
+                        product_id=product.id,
+                        quantity=cart_item.quantity,
+                        unit_price=product.price,
+                        total_price=cart_item.quantity * product.price,
+                        created_at=datetime.now(),
+                        updated_at=datetime.now()
+                    )
+                    db.add(order_item)
+            db.commit()
+            
+            return JSONResponse({"Message": "Order created successfully","id":str(order.id)})
+        else:
+            raise HTTPException(status_code=403, detail="you can't accessed this cart")
+    else:
+        return HTTPException(status_code=404,detail="Cart not found or not active")
 
-    except Exception as e:
-        # Rollback changes if an error occurs
-        db.rollback()
-        # Raise HTTPException with error message
-        raise HTTPException(
-            status_code=400,
-            detail=f"Failed to create order: {str(e)}",
-        )
+    
+
+def get_order_data_with_item(user_id):
+    order_data = db.query(Order).filter(Order.user_id == user_id,).all()
+    order_list = []
+    if order_data:
+        for order in order_data:
+            order_items = db.query(OrderItem).filter_by(order_id= order.id).all()
+
+            filter_data=serializer_for_order(order,order_items)
+            order_list.append(filter_data)
+
+        return JSONResponse({"Data": order_list})
+    else:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+def delete_order(order_id,user_id):
+
+    order_data = db.query(Order).filter_by(id = order_id).first()
+    if order_data:
+        if order_data.user_id == user_id:
+            cart_data = db.query(Cart).filter_by(id = order_data.cart_id).first()
+            cart_data.status ="canceled"
+            order_item_data = db.query(OrderItem).filter_by(order_id = order_id).all()
+            db.delete(order_data)
+            for item in order_item_data:
+                db.delete(item)
+            db.commit()
+            return JSONResponse({"Message": "Order deleted"})
+        else:
+            raise HTTPException(status_code=403, detail="you  can't accessed this order")
+    else:
+        raise HTTPException(status_code=404,detail="Order not found")
+    

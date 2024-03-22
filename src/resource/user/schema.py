@@ -7,9 +7,9 @@ class UserRequest(BaseModel):
     name : Optional[str]
     first_name : Optional[str]
     last_name : Optional[str]
-    phone_no : int
+    phone_no : Optional[int]
     email : Optional[str]
-    password : str
+    password : Optional[str]
     
 
 class AdminRequest(BaseModel):
@@ -17,7 +17,7 @@ class AdminRequest(BaseModel):
     name : Optional[str]
     first_name : Optional[str]
     last_name : Optional[str]
-    phone_no : int
+    phone_no : Optional[int]
     email : Optional[str]
-    password : str
+    password :Optional[str]
     admin_key : Optional[str]

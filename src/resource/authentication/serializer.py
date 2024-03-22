@@ -24,7 +24,6 @@ def serializer_for_login(users_data):
     users_data = users_data[0]
     filter_data={   
                 "id":users_data.id,
-                "name":users_data.name,
                 "email " :users_data.email,
                 "phone_no":users_data.phone_no,
                 "is_admin " :users_data.is_admin,

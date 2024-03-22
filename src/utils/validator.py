@@ -16,7 +16,6 @@ def authorization(Authorization=(Header(..., description="Authorization"))):
         db.query(User)
         .filter(
             User.id == decode_token["id"],
-            User.name == decode_token["name"],
             User.is_active == True,
             User.is_deleted == False,
         )

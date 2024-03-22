@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 
 class CartItemCreate(BaseModel):
-    user_id: str
     product_id: str
     quantity: int
 
@@ -12,4 +11,4 @@ class CartItemUpdate(BaseModel):
 
 class CartItemDelete(BaseModel):
     cart_id: str
-    item_id: str
+    id: str

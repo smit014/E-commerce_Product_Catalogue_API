@@ -19,4 +19,5 @@ class User(Base):
     is_deleted = Column(Boolean, default=False)
 
     cart = relationship("Cart", back_populates="user")
+    orders = relationship("Order", back_populates="user")
 
