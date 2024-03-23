@@ -8,6 +8,7 @@ from datetime import datetime
 
 db = Sessionlocal()
 
+
 def create_category(category_details, user_details):
     id = str(uuid.uuid4())
 
@@ -23,7 +24,9 @@ def create_category(category_details, user_details):
         db.commit()
         db.close()
 
-        return JSONResponse({"Message": "category created successfully","id ":str(id)})
+        return JSONResponse(
+            {"Message": "category created successfully", "id ": str(id)}
+        )
     else:
         raise HTTPException(status_code=403, detail="you are not allowed to create")
 
@@ -35,24 +38,31 @@ def get_all_category():
         return JSONResponse({"Data": filter_data})
     else:
         raise HTTPException(status_code=404, detail="categorys not found")
-    
+
+
 def get_category(category_id):
-    category_data = db.query(Category).filter_by(id = category_id).first()
+    category_data = db.query(Category).filter_by(id=category_id).first()
     if category_data:
         filter_data = serializer_for_category(category_data)
         return JSONResponse({"Data": filter_data})
     else:
         raise HTTPException(status_code=404, detail="categorys not found")
-    
-
 
 
 def update_category(category_details, category_id, user_details):
     if user_details.get("is_admin"):
         category_data = db.query(Category).filter_by(id=category_id).first()
         if category_data:
-            category_data.name = category_details.get("name") if category_details.get("name") is not None else category_data.name
-            category_data.description = category_details.get("description") if category_details.get("description") is not None else category_data.description
+            category_data.name = (
+                category_details.get("name")
+                if category_details.get("name") is not None
+                else category_data.name
+            )
+            category_data.description = (
+                category_details.get("description")
+                if category_details.get("description") is not None
+                else category_data.description
+            )
             category_data.updated_at = datetime.now()
             db.commit()
             db.close()
@@ -60,9 +70,7 @@ def update_category(category_details, category_id, user_details):
         else:
             raise HTTPException(status_code=404, detail="Category not found")
     else:
-        raise HTTPException(
-            status_code=401, detail="you have no rights to upadate it"
-        )
+        raise HTTPException(status_code=401, detail="you have no rights to upadate it")
 
 
 def delete_category(category_id, user_details):

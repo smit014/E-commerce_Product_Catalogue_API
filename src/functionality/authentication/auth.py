@@ -59,18 +59,22 @@ def change_password(user_details, user_id):
         if user_data:
             if password == user_details.get("new_password"):
                 raise HTTPException(
-                            status_code=401,
-                            detail="Old Password and New Password has to be Different",
-                        )
+                    status_code=409,
+                    detail="Old Password and New Password has to be Different",
+                )
             else:
                 if check_password_hash(user_data.password, password):
                     user_data.password = new_password
                     db.commit()
                     db.close()
-                    return JSONResponse({"Message": "password successfully changed"}, status_code=200)
+                    return JSONResponse(
+                        {"Message": "password successfully changed"}, status_code=200
+                    )
                 else:
-                    raise HTTPException(status_code=401, detail="Incorrect Old password")
+                    raise HTTPException(
+                        status_code=401, detail="Incorrect Old password"
+                    )
         else:
             raise HTTPException(status_code=404, detail="User not found")
     else:
-        raise HTTPException(status_code=407,detail="Login with correct user data")
+        raise HTTPException(status_code=407, detail="Login with correct user data")

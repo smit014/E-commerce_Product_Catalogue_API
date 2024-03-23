@@ -1,10 +1,11 @@
 from database.database import Base
-from sqlalchemy import Column,String,VARCHAR,Boolean,DateTime
+from sqlalchemy import Column, String, VARCHAR, Boolean, DateTime
 from datetime import datetime
 from sqlalchemy.orm import relationship
 
+
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
     id = Column(String, primary_key=True)
     first_name = Column(VARCHAR(30))
     last_name = Column(VARCHAR(30))
@@ -20,4 +21,3 @@ class User(Base):
 
     cart = relationship("Cart", back_populates="user")
     orders = relationship("Order", back_populates="user")
-

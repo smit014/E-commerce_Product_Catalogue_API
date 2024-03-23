@@ -8,7 +8,7 @@ db = Sessionlocal()
 
 
 def authorization(Authorization=(Header(..., description="Authorization"))):
-    
+
     token = Authorization.split(" ")[1]
     decode_token = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=["HS256"])
 
@@ -22,10 +22,10 @@ def authorization(Authorization=(Header(..., description="Authorization"))):
         .first()
     )
     if not user_data:
-        raise HTTPException(status_code=403,detail="Authentication failed")
+        raise HTTPException(status_code=403, detail="Authentication failed")
 
     user_dict = user_data.__dict__
 
-    user_dict.pop('_sa_instance_state', None)
+    user_dict.pop("_sa_instance_state", None)
 
     return user_dict

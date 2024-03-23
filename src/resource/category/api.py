@@ -26,8 +26,9 @@ def get_all_category_api():
     category_info = get_all_category()
     return category_info
 
+
 @category_router.get("/category/{category_id}", status_code=200)
-def get_category_api(category_id:str):
+def get_category_api(category_id: str):
     category_info = get_category(category_id)
     return category_info
 
@@ -44,8 +45,7 @@ def update_category_api(
 
 @category_router.delete("/category/{category_id}", status_code=204)
 def delete_category_api(
-    category_id: str,
-    user_data: Annotated[dict, Depends(authorization)]
+    category_id: str, user_data: Annotated[dict, Depends(authorization)]
 ):
     category_info = delete_category(category_id, user_data)
     return category_info

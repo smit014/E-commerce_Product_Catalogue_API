@@ -1,10 +1,11 @@
 from database.database import Base
-from sqlalchemy import Column,String,VARCHAR,DateTime,ForeignKey
+from sqlalchemy import Column, String, VARCHAR, DateTime, ForeignKey
 from datetime import datetime
 from src.resource.user.model import User
 
+
 class Category(Base):
-    __tablename__ = 'categories'
+    __tablename__ = "categories"
     id = Column(String, primary_key=True)
     name = Column(VARCHAR(50), nullable=False)
     description = Column(String, nullable=True)

@@ -26,7 +26,9 @@ def create_product(product_details, user_details):
             )
             db.add(product_info)
             db.commit()
-            return JSONResponse({"Message": "Product created successfully"})
+            return JSONResponse(
+                {"Message": "Product created successfully", "id": str(id)}
+            )
         except Exception as e:
             db.rollback()
             raise HTTPException(status_code=400, detail="Enter the mandatory fields")
@@ -38,10 +40,8 @@ def create_product(product_details, user_details):
 
 def get_product(product_details):
     if product_details.get("category_id"):
-        query = (
-            db.query(Product)
-            .filter_by(category_id=product_details.get("category_id"))
-            
+        query = db.query(Product).filter_by(
+            category_id=product_details.get("category_id")
         )
         if product_details.get("min_price") is not None:
             query = query.filter(Product.price >= product_details.get("min_price"))
@@ -62,11 +62,31 @@ def update_product(product_id, product_detail, user_details):
         product_data = db.query(Product).filter_by(id=product_id).first()
         if product_data:
             product_data.name = product_detail.get("name")
-            product_data.description = product_detail.get("description") if product_detail.get("description") is not None else product_data.description
-            product_data.price = product_detail.get("price") if product_detail.get("price") is not None else product_data.price
-            product_data.stock_quantity = product_detail.get("stock_quantity") if product_detail.get("stock_quantity") is not None else product_data.stock_quantity
-            product_data.category_id = product_detail.get("category_id") if product_detail.get("category_id") is not None else product_data.category_id
-            product_data.image = product_detail.get("image") if product_detail.get("image") is not None else product_data.image
+            product_data.description = (
+                product_detail.get("description")
+                if product_detail.get("description") is not None
+                else product_data.description
+            )
+            product_data.price = (
+                product_detail.get("price")
+                if product_detail.get("price") is not None
+                else product_data.price
+            )
+            product_data.stock_quantity = (
+                product_detail.get("stock_quantity")
+                if product_detail.get("stock_quantity") is not None
+                else product_data.stock_quantity
+            )
+            product_data.category_id = (
+                product_detail.get("category_id")
+                if product_detail.get("category_id") is not None
+                else product_data.category_id
+            )
+            product_data.image = (
+                product_detail.get("image")
+                if product_detail.get("image") is not None
+                else product_data.image
+            )
             product_data.updated_at = datetime.now()
             db.commit()
             db.close()
